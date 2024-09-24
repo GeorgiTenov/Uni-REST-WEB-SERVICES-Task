@@ -1,0 +1,70 @@
+CLIENTS
+@GET
+url: /clients/ -> returns all of the clients.
+
+@GET
+url: /clients/{id} -> returns the client matching the parameter id.
+
+@POST
+url: /clients/ -> adds a new client entity to the list (database) RequiredBody Client.
+
+@DELETE
+url: /clients/{id} -> removes a client matching the id from the list (database).
+
+@PUT
+url: /clients/{id} -> updates the client matching the id parameter with the update Client RequestBody. 
+-----------------------------------------------------------------------------------------------------
+ORDERS
+@GET
+url: /orders/ -> returns all of the orders.
+
+@GET
+url: /orders/{id} -> returns the specific order matching the id.
+
+@POST
+url: /orders/ -> creates a new order with the passed request body.
+
+@DELETE
+url: /orders/{id} -> deletes the specific order matching the id.
+
+@PUT
+url: /orders/{id} -> updates the specific order matching the id with the passed request body.
+-----------------------------------------------------------------------------------------------------
+PRODUCTS
+@GET
+url: /products/ -> returns all of the products.
+
+@GET
+url: /products/{id} -> returns the specific product matching the id.
+
+@GET
+url: /products/shopping-cart/{shoppingCartId} -> returns a list of products wich has the passed shopping cart id.
+
+@POST
+url: /products/ -> creates a new product with the passed request body.
+
+@DELETE
+url: /products/{id} -> deletes the specific product with the matching id.
+
+@PUT
+url: /products/{id} -> updates the specific product matching the given id with the passed request body.
+-----------------------------------------------------------------------------------------------------
+SHOPPING CARTS
+@GET
+url: /shopping-carts/ -> returns all of the shopping carts.
+
+@GET
+url: /shopping-carts/{id} -> returns the shopping cart matching the passed id.
+
+@GET
+url: /shopping-carts/order/{orderId} -> returns a list of all of the shopping carts matching the order id.
+
+@POST
+url: /shopping-carts/ -> creates a new shopping cart with a given request body(ShoppingCart).
+
+@DELETE
+url: /shopping-carts/{id} -> deletes a shopping cart entity matching the id.
+
+@PUT
+url: /shopping-carts/{id} -> updates the shopping cart with the matching id, via the given request body (ShoppingCart).
+
