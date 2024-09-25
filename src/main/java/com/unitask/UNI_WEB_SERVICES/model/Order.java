@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -21,15 +23,16 @@ import lombok.Setter;
         initialValue = 1,
         allocationSize = 1
 )
-@Table(name = "order")
+@Table(name = "`order`")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "order_seq")
     @Column(name = "id",
             nullable = false)
     private Long id;
-    @Column(name = "client_id")
-    private Long clientId;
+    @ManyToOne
+    @JoinColumn(name = "client_id")
+    private Client client;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
 }

@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -28,8 +30,9 @@ public class Product {
     @Column(name = "id",
             nullable = false)
     private Long id;
-    @Column(name = "shopping_cart_id")
-    private Long shoppingCartId;
+    @ManyToOne
+    @JoinColumn(name = "shopping_cart_id")
+    private ShoppingCart shoppingCart;
     @Column(name = "description")
     private String description;
     @Column(name = "price")

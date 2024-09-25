@@ -41,7 +41,7 @@ public class ProductService implements MyService<Product> {
     public void update(Long id, Product entity) {
         Optional<Product> optionalProduct = repository.findById(id);
         optionalProduct.ifPresent(product -> {
-            product.setShoppingCartId(entity.getShoppingCartId());
+            product.setShoppingCart(entity.getShoppingCart());
             product.setPrice(entity.getPrice());
             product.setDescription(entity.getDescription());
             repository.save(product);
@@ -51,7 +51,8 @@ public class ProductService implements MyService<Product> {
     public List<Product> findProductsByShoppingCartId(Long shoppingCartId) {
         return repository.findAll()
                 .stream()
-                .filter(product -> product.getShoppingCartId()
+                .filter(product -> product.getShoppingCart() != null)
+                .filter(product -> product.getShoppingCart().getId()
                         .equals(shoppingCartId))
                 .toList();
     }

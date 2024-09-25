@@ -39,13 +39,13 @@ public class ShoppingCartService implements MyService<ShoppingCart> {
     @Override
     public void update(Long id, ShoppingCart entity) {
         repository.findById(id)
-                .ifPresent(shoppingCart -> shoppingCart.setOrderId(entity.getOrderId()));
+                .ifPresent(shoppingCart -> shoppingCart.setOrder(entity.getOrder()));
     }
 
     public List<ShoppingCart> findShoppingCartsByOrderId(Long orderId) {
         return repository.findAll()
                 .stream()
-                .filter(shoppingCart -> shoppingCart.getOrderId()
+                .filter(shoppingCart -> shoppingCart.getOrder().getId()
                         .equals(orderId))
                 .toList();
     }

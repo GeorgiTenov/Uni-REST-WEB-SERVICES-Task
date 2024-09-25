@@ -41,7 +41,7 @@ public class OrderService implements MyService<Order> {
         repository.findById(id)
                 .ifPresent(order -> {
                     order.setCreatedOn(entity.getCreatedOn());
-                    order.setClientId(entity.getClientId());
+                    order.setClient(entity.getClient());
                     repository.save(order);
                 });
     }
@@ -49,7 +49,7 @@ public class OrderService implements MyService<Order> {
     public List<Order> findOrdersByClientId(Long clientId) {
         return repository.findAll()
                 .stream()
-                .filter(order -> order.getClientId()
+                .filter(order -> order.getClient().getId()
                         .equals(clientId))
                 .toList();
     }
