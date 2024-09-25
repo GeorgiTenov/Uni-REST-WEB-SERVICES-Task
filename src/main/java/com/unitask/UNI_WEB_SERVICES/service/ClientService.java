@@ -1,64 +1,50 @@
 package com.unitask.UNI_WEB_SERVICES.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-import com.unitask.UNI_WEB_SERVICES.interfaces.Service;
+import com.unitask.UNI_WEB_SERVICES.interfaces.MyService;
 import com.unitask.UNI_WEB_SERVICES.model.Client;
+import com.unitask.UNI_WEB_SERVICES.repo.ClientRepository;
 
-@RestController
-public class ClientService implements Service<Client> {
-    private final List<Client> clients = new ArrayList<>();
+import jakarta.annotation.Resource;
+
+@Service
+public class ClientService implements MyService<Client> {
+    @Resource
+    private ClientRepository repository;
 
     @Override
-    @GetMapping("/clients/")
     public List<Client> findAll() {
-        return clients;
+        return repository.findAll();
     }
 
     @Override
-    @GetMapping("/clients/{id}")
-    public Client findById(@PathVariable("id") Long id) {
-        return clients.stream()
-                .filter(client -> client.getId()
-                        .equals(id))
-                .findFirst()
+    public Client findById(Long id) {
+        return repository.findById(id)
                 .orElse(null);
     }
 
     @Override
-    @PostMapping("/clients/")
-    public void create(@RequestBody Client entity) {
-        clients.add(entity);
+    public void create(Client entity) {
+        repository.save(entity);
     }
 
     @Override
-    @DeleteMapping("/clients/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        clients.removeIf(client -> client.getId()
-                .equals(id));
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
     @Override
-    @PutMapping("/clients/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody Client entity) {
-        Optional<Client> optionalClient = clients.stream()
-                .filter(client -> client.getId()
-                        .equals(id))
-                .findFirst();
+    public void update(Long id, Client entity) {
+        Optional<Client> optionalClient = repository.findById(id);
         optionalClient.ifPresent(client -> {
+            client.setEmail(entity.getEmail());
             client.setUsername(entity.getUsername());
             client.setPhone(entity.getPhone());
-            client.setEmail(entity.getEmail());
+            repository.save(client);
         });
     }
 }

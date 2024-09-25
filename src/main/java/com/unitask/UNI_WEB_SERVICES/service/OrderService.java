@@ -1,63 +1,56 @@
 package com.unitask.UNI_WEB_SERVICES.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-import com.unitask.UNI_WEB_SERVICES.interfaces.Service;
+import com.unitask.UNI_WEB_SERVICES.interfaces.MyService;
 import com.unitask.UNI_WEB_SERVICES.model.Order;
+import com.unitask.UNI_WEB_SERVICES.repo.OrderRepository;
 
-@RestController
-public class OrderService implements Service<Order> {
-    private final List<Order> orders = new ArrayList<>();
+import jakarta.annotation.Resource;
+
+@Service
+public class OrderService implements MyService<Order> {
+    @Resource
+    private OrderRepository repository;
 
     @Override
-    @GetMapping("/orders/")
     public List<Order> findAll() {
-        return orders;
+        return repository.findAll();
     }
 
     @Override
-    @GetMapping("/orders/{id}")
-    public Order findById(@PathVariable("id") Long id) {
-        return orders.stream()
-                .filter(order -> order.getId()
-                        .equals(id))
-                .findFirst()
+    public Order findById(Long id) {
+        return repository.findById(id)
                 .orElse(null);
     }
 
     @Override
-    @PostMapping("/orders/")
-    public void create(@RequestBody Order entity) {
-        orders.add(entity);
+    public void create(Order entity) {
+        repository.save(entity);
     }
 
     @Override
-    @DeleteMapping("/orders/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        orders.removeIf(order -> order.getId()
-                .equals(id));
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
     @Override
-    @PutMapping("/orders/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody Order entity) {
-        Optional<Order> optionalOrder = orders.stream()
-                .filter(order -> order.getId()
-                        .equals(id))
-                .findFirst();
-        optionalOrder.ifPresent(order -> {
-            order.setClientId(entity.getClientId());
-            order.setCreatedOn(entity.getCreatedOn());
-        });
+    public void update(Long id, Order entity) {
+        repository.findById(id)
+                .ifPresent(order -> {
+                    order.setCreatedOn(entity.getCreatedOn());
+                    order.setClientId(entity.getClientId());
+                    repository.save(order);
+                });
+    }
+
+    public List<Order> findOrdersByClientId(Long clientId) {
+        return repository.findAll()
+                .stream()
+                .filter(order -> order.getClientId()
+                        .equals(clientId))
+                .toList();
     }
 }

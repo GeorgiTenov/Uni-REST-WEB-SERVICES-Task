@@ -1,66 +1,56 @@
 package com.unitask.UNI_WEB_SERVICES.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-import com.unitask.UNI_WEB_SERVICES.interfaces.Service;
+import com.unitask.UNI_WEB_SERVICES.interfaces.MyService;
 import com.unitask.UNI_WEB_SERVICES.model.Product;
+import com.unitask.UNI_WEB_SERVICES.repo.ProductRepository;
 
-@RestController
-public class ProductService implements Service<Product> {
-    private final List<Product> products = new ArrayList<>();
+import jakarta.annotation.Resource;
+
+@Service
+public class ProductService implements MyService<Product> {
+    @Resource
+    private ProductRepository repository;
 
     @Override
-    @GetMapping("/products/")
     public List<Product> findAll() {
-        return products;
+        return repository.findAll();
     }
 
     @Override
-    @GetMapping("/products/{id}")
-    public Product findById(@PathVariable("id") Long id) {
-        return products.stream()
-                .filter(product -> product.getId()
-                        .equals(id))
-                .findFirst()
+    public Product findById(Long id) {
+        return repository.findById(id)
                 .orElse(null);
     }
 
     @Override
-    @PostMapping("/products/")
-    public void create(@RequestBody Product entity) {
-        products.add(entity);
+    public void create(Product entity) {
+        repository.save(entity);
     }
 
     @Override
-    @DeleteMapping("/products/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        products.removeIf(product -> product.getId()
-                .equals(id));
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
     @Override
-    @PutMapping("/products/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody Product entity) {
-        Optional<Product> productOptional = products.stream()
-                .filter(product -> product.getId()
-                        .equals(entity.getId()))
-                .findFirst();
-        productOptional.ifPresent(product -> product.setShoppingCartId(entity.getShoppingCartId()));
+    public void update(Long id, Product entity) {
+        Optional<Product> optionalProduct = repository.findById(id);
+        optionalProduct.ifPresent(product -> {
+            product.setShoppingCartId(entity.getShoppingCartId());
+            product.setPrice(entity.getPrice());
+            product.setDescription(entity.getDescription());
+            repository.save(product);
+        });
     }
 
-    @GetMapping("/products/shopping-cart/{shoppingCartId}")
-    public List<Product> findProductsByShoppingCartId(@PathVariable("shoppingCartId") Long shoppingCartId) {
-        return products.stream()
+    public List<Product> findProductsByShoppingCartId(Long shoppingCartId) {
+        return repository.findAll()
+                .stream()
                 .filter(product -> product.getShoppingCartId()
                         .equals(shoppingCartId))
                 .toList();

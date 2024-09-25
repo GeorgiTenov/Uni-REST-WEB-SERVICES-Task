@@ -2,7 +2,7 @@ package com.unitask.UNI_WEB_SERVICES.interfaces;
 
 import java.util.List;
 
-public interface Service<T> {
+public interface MyService<T> {
     List<T> findAll();
     T findById(Long id);
     void create(T entity);

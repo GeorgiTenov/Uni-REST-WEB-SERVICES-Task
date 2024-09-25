@@ -1,66 +1,50 @@
 package com.unitask.UNI_WEB_SERVICES.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 
-import com.unitask.UNI_WEB_SERVICES.interfaces.Service;
+import com.unitask.UNI_WEB_SERVICES.interfaces.MyService;
 import com.unitask.UNI_WEB_SERVICES.model.ShoppingCart;
+import com.unitask.UNI_WEB_SERVICES.repo.ShoppingCartRepository;
 
-@RestController
-public class ShoppingCartService implements Service<ShoppingCart> {
-    private final List<ShoppingCart> shoppingCarts = new ArrayList<>();
+import jakarta.annotation.Resource;
+
+@Service
+public class ShoppingCartService implements MyService<ShoppingCart> {
+    @Resource
+    private ShoppingCartRepository repository;
 
     @Override
-    @GetMapping("/shopping-carts/")
     public List<ShoppingCart> findAll() {
-        return shoppingCarts;
+        return repository.findAll();
     }
 
     @Override
-    @GetMapping("/shopping-carts/{id}")
-    public ShoppingCart findById(@PathVariable("id") Long id) {
-        return shoppingCarts.stream()
-                .filter(shoppingCart -> shoppingCart.getId()
-                        .equals(id))
-                .findFirst()
+    public ShoppingCart findById(Long id) {
+        return repository.findById(id)
                 .orElse(null);
     }
 
     @Override
-    @PostMapping("/shopping-carts/")
-    public void create(@RequestBody ShoppingCart shoppingCart) {
-        shoppingCarts.add(shoppingCart);
+    public void create(ShoppingCart entity) {
+        repository.save(entity);
     }
 
     @Override
-    @DeleteMapping("/shopping-carts/{id}")
-    public void delete(@PathVariable("id") Long id) {
-        shoppingCarts.removeIf(shoppingCart -> shoppingCart.getId()
-                .equals(id));
+    public void delete(Long id) {
+        repository.deleteById(id);
     }
 
     @Override
-    @PutMapping("/shopping-carts/{id}")
-    public void update(@PathVariable("id") Long id, @RequestBody ShoppingCart shoppingCart) {
-        Optional<ShoppingCart> existingCart = shoppingCarts.stream()
-                .filter(cart -> cart.getId()
-                        .equals(id))
-                .findFirst();
-        existingCart.ifPresent(cart -> cart.setOrderId(shoppingCart.getOrderId()));
+    public void update(Long id, ShoppingCart entity) {
+        repository.findById(id)
+                .ifPresent(shoppingCart -> shoppingCart.setOrderId(entity.getOrderId()));
     }
 
-    @GetMapping("/shopping-carts/order/{orderId}")
-    public List<ShoppingCart> findShoppingCartsByOrderId(@PathVariable("orderId") Long orderId) {
-        return shoppingCarts.stream()
+    public List<ShoppingCart> findShoppingCartsByOrderId(Long orderId) {
+        return repository.findAll()
+                .stream()
                 .filter(shoppingCart -> shoppingCart.getOrderId()
                         .equals(orderId))
                 .toList();
